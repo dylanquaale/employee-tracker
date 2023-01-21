@@ -1,0 +1,3 @@
+-- SELECT *
+-- FROM employees_db
+-- JOIN department ON employees_db.department = department.id;
