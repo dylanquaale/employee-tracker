@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 const inquirer = require("inquirer");
 require("console.table");
 
+// mysql connection query
 const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -14,7 +15,8 @@ const connection = mysql.createConnection({
 let showroles;
 let showdepartments;
 let showemployees;
-
+   
+    // this will initiate mysql 
 connection.connect(function (err) {
   if (err) {
     return;
@@ -43,7 +45,7 @@ connection.connect(function (err) {
 
   showprompt();
 });
-
+  // prompt menu
 function showprompt() {
   inquirer
     .prompt(
@@ -94,190 +96,131 @@ function showprompt() {
       })
 };
 
+function menu(option) {
+  switch (option) {
+    case 'viewEmployees':
+      viewAllEmployees();
+      break;
+      case 'viewDepartments':
+        viewAllDepartments();
+        break;
+        case 'viewRoles':
+        viewAllRoles();
+        break;
+        case 'addEmployee':
+        addEmployee();
+        break;
+        case 'deleteEmployee':
+        deleteEmployee();
+        break;
+        case 'addDepartment':
+        addDepartment();
+        break;
+        case 'addRole':
+        addRole();
+        break;
+        case 'updateRole':
+        updateRole();
+        break;
+        case 'quit':
+        quit();
+      }
+    };
+      // view all employees prompt
+    function viewAllEmployees() {
+      connection.query(`SELECT employee.id, employee.first_name AS 'First Name', 
+      employee.last_name AS 'Last Name', role.title AS Title, department.name AS Department,
+      role.salary AS Salary, CONCAT(boss.first_name, ' ', boss.last_name) AS Manager
+      FROM employee 
+      JOIN role on employee.role_id = role.id
+      JOIN department on role.department_id = department.id
+      LEFT JOIN employee boss on boss.id = employee.manager_id
+      ORDER BY employee.last_name;`, function (error, res) {
+        console.table(res);
+        endMenu();
+      })
+    };
+      // function to: view all the departments
+    function viewAllDepartments() {
+      console.log("view all departments")
+      connection.query("SELECT * from department", function (error, res) {
+        console.table(res);
+        endMenu();
+      })
+    };
+      // function to: view all roles
+    function viewAllRoles() {
+      connection.query("SELECT * from role", function (error, res) {
+        console.table(res);
+        endMenu();
+      })
+    };
+
+    function addEmployee() {
+      inquirer
+        .prompt([
+          {
+            type: 'input',
+            message: 'What is employees first name?',
+            name: 'firstName',
+          },
+          {
+            type: 'input',
+            message: 'What is employees last name?',
+            name: 'lastName',
+          },
+          {
+            type: 'list',
+            message:'What is the employees roles?',
+            name: 'roles',
+            choices: showroles
+          },
+          {
+            type: 'list',
+            message: "Who is the employee's manager?",
+            name: "manager",
+            choices: showemployees,
+          },
+        ]).then(function (response) {
+          addEmployee(response)
+        })
+    };
+
+    function addEmployee(data) {
+
+      connection.query("INSERT INTO employee SET ?",
+        {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          role_id: data.title,
+          manager_id: data.manager
+        }, function (error, res) {
+          if (error) throw error;
+        })
+      endMenu();
+    };
+
+    
+
+
+    // function endMenu() {
+    //   confirm("Would you like to continue?")
+    //     .then(function confirmed() {
+    //       showmenu();
+    //     }, function cancelled() {
+    //       end();
+    //     });
+    // ;}
+
+    // function end() {
+    //   console.log("Thank you for using Employee Tracker!");
+    //   connection.end();
+    //   process.exit();
+    // }
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// connection.connect(function (err) {
-//   if (err) throw err;
-//   console.log("connected as id " + connection.threadId);
-//   console.log(`
-//   ╔═══╗─────╔╗──────────────╔═╗╔═╗
-//   ║╔══╝─────║║──────────────║║╚╝║║
-//   ║╚══╦╗╔╦══╣║╔══╦╗─╔╦══╦══╗║╔╗╔╗╠══╦═╗╔══╦══╦══╦═╗
-//   ║╔══╣╚╝║╔╗║║║╔╗║║─║║║═╣║═╣║║║║║║╔╗║╔╗╣╔╗║╔╗║║═╣╔╝
-//   ║╚══╣║║║╚╝║╚╣╚╝║╚═╝║║═╣║═╣║║║║║║╔╗║║║║╔╗║╚╝║║═╣║
-//   ╚═══╩╩╩╣╔═╩═╩══╩═╗╔╩══╩══╝╚╝╚╝╚╩╝╚╩╝╚╩╝╚╩═╗╠══╩╝
-//   ───────║║──────╔═╝║─────────────────────╔═╝║
-//   ───────╚╝──────╚══╝─────────────────────╚══╝`);
-//   // runs the app
-//   runPrompt();
-// });
-// function runPrompt() {
-//   inquirer
-//     .prompt({
-//       type: "list",
-//       name: "task",
-//       message: "What would you like to do?",
-//       choices: [
-//         "View All Employees",
-//         "Add Employee",
-//         "Update Employee Role",
-//         "View All Roles",
-//         "Add Role",
-//         "View All Departments",
-//         "Add Department",
-//         "Quit",
-//       ],
-//     })
-//     .then(function ({ task }) {
-//       switch (task) {
-//         case "View All Employees":
-//           viewAllEmployees();
-//           break;
-
-//         case "Add Employee":
-//           addEmployees();
-//           break;
-
-//         case "Update Employee Role":
-//           updateEmployeeRole();
-//           break;
-
-//         case "View all Roles":
-//           viewAllRoles();
-//           break;
-
-//         case "Add Role":
-//           addRole();
-//           break;
-
-//         case "View all Departments":
-//           viewAllDepartments();
-//           break;
-
-//           case "Add Department":
-//             addDepartment();
-//             break;
-
-//         case "Quit":
-//           connection.quit();
-//           break;
-//       }
-//     });
-// }
-
-// function viewAllEmployees() {
-//   console.log("Viewing All employees");
-
-//   let select =
-//     `SELECT e.id, 
-//     e.first_name, 
-//     e.last_name, 
-//     r.title, 
-//     d.name AS department, 
-//     r.salary, 
-//     CONCAT(m.first_name, ' ', m.last_name) 
-//     AS manager
-//   FROM employee e
-//   LEFT JOIN role r
-// 	ON e.role_id = r.id
-//   LEFT JOIN department d
-//   ON d.id = r.department_id
-//   LEFT JOIN employee m
-// 	ON m.id = e.manager_id`
-
-//   connection.query(select, function (err, res) {
-//     if (err) throw err;
-
-//     console.table(res);
-//     console.log("All Employees viewed!");
-//     runPrompt();
-//   });
-// };
-
-// function viewAllDepartments() {
-//   console.log("Viewing employees by department\n");
-
-//   var query =
-//     `SELECT d.id, d.name, r.salary AS budget
-//   FROM employee e
-//   LEFT JOIN role r
-// 	ON e.role_id = r.id
-//   LEFT JOIN department d
-//   ON d.id = r.department_id
-//   GROUP BY d.id, d.name`
-
-//   connection.query(query, function (err, res) {
-//     if (err) throw err;
-
-//     const departmentChoices = res.map(data => ({
-//       value: data.id, name: data.name
-//     }));
-
-//     console.table(res);
-//     console.log("Department view succeed!\n");
-
-//     promptDepartment(departmentChoices);
-//   });
-// }
-
-// function promptDepartment(departmentChoices) {
-
-//   inquirer
-//     .prompt([
-//       {
-//         type: "list",
-//         name: "departmentId",
-//         message: "Which department would you choose?",
-//         choices: departmentChoices
-//       }
-//     ])
-//     .then(function (answer) {
-//       console.log("answer ", answer.departmentId);
-
-//       var query =
-//         `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department 
-//   FROM employee e
-//   JOIN role r
-// 	ON e.role_id = r.id
-//   JOIN department d
-//   ON d.id = r.department_id
-//   WHERE d.id = ?`
-
-//       connection.query(query, answer.departmentId, function (err, res) {
-//         if (err) throw err;
-
-//         console.table("response ", res);
-//         console.log(res.affectedRows + "Employees are viewed!\n");
-
-//         firstPrompt();
-//       });
-//     });
-// }
 
