@@ -1,5 +1,5 @@
 # employee-tracker
-
+Tutor: Ramon Sanchez,
 asoliz,
 https://github.com/rdevans87,
 https://github.com/EdenKhaos/12-mysql-employee-tracker,
