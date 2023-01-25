@@ -1,6 +1,7 @@
 // get the client
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
+const confirm = require('inquirer-confirm');
 require("console.table");
 
 // mysql connection query
@@ -98,31 +99,31 @@ function showprompt() {
 
 function menu(option) {
   switch (option) {
-    case 'viewEmployees':
+    case "viewEmployees":
       viewAllEmployees();
       break;
-      case 'viewDepartments':
+      case "viewDepartments":
         viewAllDepartments();
         break;
-        case 'viewRoles':
+        case "viewRoles":
         viewAllRoles();
         break;
-        case 'addEmployee':
+        case "addEmployee":
         addEmployee();
         break;
-        case 'deleteEmployee':
+        case "deleteEmployee":
         deleteEmployee();
         break;
-        case 'addDepartment':
+        case "addDepartment":
         addDepartment();
         break;
-        case 'addRole':
+        case "addRole":
         addRole();
         break;
-        case 'updateRole':
+        case "updateRole":
         updateRole();
         break;
-        case 'quit':
+        case "quit":
         quit();
       }
     };
@@ -160,23 +161,23 @@ function menu(option) {
       inquirer
         .prompt([
           {
-            type: 'input',
-            message: 'What is employees first name?',
-            name: 'firstName',
+            type: "input",
+            message: "What is employees first name?",
+            name: "firstName",
           },
           {
-            type: 'input',
-            message: 'What is employees last name?',
-            name: 'lastName',
+            type: "input",
+            message: "What is employees last name?",
+            name: "lastName",
           },
           {
-            type: 'list',
-            message:'What is the employees roles?',
-            name: 'roles',
+            type: "list",
+            message:"What is the employees roles?",
+            name: "roles",
             choices: showroles
           },
           {
-            type: 'list',
+            type: "list",
             message: "Who is the employee's manager?",
             name: "manager",
             choices: showemployees,
@@ -187,10 +188,9 @@ function menu(option) {
     };
 
     function addEmployee(data) {
-
-      connection.query("INSERT INTO employee SET ?",
+      connection.query("Add employee to role ?",
         {
-          first_name: data.firstName,
+          firstName: data.firstName,
           last_name: data.lastName,
           role_id: data.title,
           manager_id: data.manager
@@ -200,23 +200,126 @@ function menu(option) {
       endMenu();
     };
 
+    function deleteEmployee() {
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            message: "Delete which employee?",
+            name:"detId",
+            choices: showemployees
+          }
+        ])
+        .then(function (response) {
+          console.log("Employee id: " + response.detId + " deleted.");
+          connection.query(`DELETE from employee WHERE id = ${response.detId}`,
+            function (err, res) {
+              if (err) throw err;
+            });
+          endMenu();
+        })
+    };
+    function addDepartment() {
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            message: "What would you like to name the new department?",
+            name: "name"
+          }
+        ])
+        .then(function (response) {
+          addDepartment(response);
+        })
+    }
+    function addDepartment(data) {
+    connection.query("Add new department ?", { name: data.name },
+    function (error, res) {
+      if (error) throw error;
+    });
+    endMenu();
+    };
+
+    function addRole() {
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            message: "What is the employees name name for the role?",
+            name: "title"
+          },
+          {
+            type: "input",
+            message: "What is the salary of this role?",
+            name: "salary"
+          },
+          {
+            type: "list",
+            message: "In which department is the new role?",
+            name: "id",
+            choices: showdepartments
+          }
+        ])
+        .then(function (response) {
+          addEmployeeRole(response);
+        })
+    }
+
+    function addEmployeeRole(data) {
+      connection.query("INSERT INTO role SET ?", {
+        title: data.title,
+        salary: data.salary,
+        department_id: data.id
+      }, function (error, res) {
+        if (error) throw error;
+      });
+      endMenu();
+    }
+
+    function updateRole() {
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            message: "For which employee would you like to update the role?",
+            name: "empID",
+            choices: showemployees
+          },
+          {
+            type: "list",
+            message: "What is the employee's new role?",
+            name: "titleID",
+            choices: showroles
+          }
+        ])
+        .then(function (response) {
+          updateEmployeeRole(response);
+        })
+    }
     
+    function updateEmployeeRole(data) {
+      connection.query(`UPDATE employee SET role_id = ${data.titleID} WHERE id = ${data.detId}`,
+        function (error, res) {
+          if (error) throw error;
+        });
+      endMenu();
+    }
+    
+   
+    function endMenu() {
+      confirm("Would you like to continue?")
+        .then(function confirmed() {
+          showprompt();
+        }, function cancelled() {
+          end();
+        });
+    ;}
 
-
-    // function endMenu() {
-    //   confirm("Would you like to continue?")
-    //     .then(function confirmed() {
-    //       showmenu();
-    //     }, function cancelled() {
-    //       end();
-    //     });
-    // ;}
-
-    // function end() {
-    //   console.log("Thank you for using Employee Tracker!");
-    //   connection.end();
-    //   process.exit();
-    // }
+    function end() {
+      console.log("Thank you for using the Employee Tracker!");
+      connection.end();
+      process.exit();
+    }
 
 
 
