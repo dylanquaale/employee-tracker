@@ -185,30 +185,14 @@ function menu(option) {
             choices: showemployees,
           },
         ]).then(function (response) {
-          firstName: data.firstName,
-          last_name: data.lastName,
-          role_id: data.title,
-          manager_id: data.manager
-         function (error, res) {
-          if (error) throw error;
-        }
-      endMenu();
-
-          addEmployee(response)
-        }
-
-    // // function addEmployee(data) {
-    // //   connection.query("Add employee to role ?",
-    // //     {
-    //       // firstName: data.firstName,
-    //       // last_name: data.lastName,
-    //       // role_id: data.title,
-    //       // manager_id: data.manager
-    //     }, function (error, res) {
-    //       if (error) throw error;
-    //     })
-    //   endMenu();
-    // };
+           
+          connection.query("SELECT * from employee", function (error, res) {
+            console.table(res);
+            endMenu();
+          // addEmployee(response)
+        })
+      
+    });
 
     function deleteEmployee() {
       inquirer
@@ -255,7 +239,7 @@ function menu(option) {
         .prompt([
           {
             type: "input",
-            message: "What is the employees name name for the role?",
+            message: "What is the employees name for this role?",
             name: "title"
           },
           {
@@ -336,4 +320,4 @@ function menu(option) {
 
 
 
-
+  }
