@@ -66,7 +66,7 @@ function showprompt() {
           name: "View all roles",
           value: "viewRoles",
         },
-      
+
         {
           name: "Add role",
           value: "addRole",
@@ -78,15 +78,15 @@ function showprompt() {
         },
 
         {
-          name: "Update role",
-          value: "updateRole",
-        },
-
-        {
           name: "Add department",
           value: "addDept",
         },
 
+        {
+          name: "Update role",
+          value: "updateRole",
+        },
+        
         {
           name: "Delete employee",
           value: "deleteEmployee",
@@ -139,11 +139,11 @@ function viewAllEmployees() {
   connection.query(
     `SELECT employee.id, employee.first_name AS 'First Name', 
       employee.last_name AS 'Last Name', role.title AS Title, department.name AS Department,
-      role.salary AS Salary, CONCAT(boss.first_name, ' ', boss.last_name) AS Manager
+      role.salary AS Salary, CONCAT(manager.first_name, ' ', manager.last_name) AS Manager
       FROM employee 
       JOIN role on employee.role_id = role.id
       JOIN department on role.department_id = department.id
-      LEFT JOIN employee boss on boss.id = employee.manager_id
+      LEFT JOIN employee manager on manager.id = employee.manager_id
       ORDER BY employee.last_name;`,
     function (error, res) {
       console.table(res);
@@ -168,7 +168,7 @@ function viewAllRoles() {
   });
 }
 
-  // add employee prompt
+// add employee prompt
 function addEmployee() {
   inquirer
     .prompt([
@@ -199,11 +199,11 @@ function addEmployee() {
       connection.query("SELECT * from employee", function (error, res) {
         console.table(res);
         endMenu();
-      })
-      // addEmployee(response);
-    })
-};
+      });
+    });
+}
 
+// add role prompt
 function addRole() {
   inquirer
     .prompt([
@@ -219,19 +219,23 @@ function addRole() {
       },
       {
         type: "list",
-        message: "In which department is the new role?",
+        message: "What department does this role belong to?",
         name: "id",
         choices: showdepartments,
       },
     ])
     .then(function (response) {
-      connection.query("SELECT * from employee for role", function (error, res) {
-        console.table(res);
-        endMenu();
-      })
+      connection.query(
+        "SELECT * from employee for role",
+        function (error, res) {
+          console.table(res);
+          endMenu();
+        }
+      );
     });
 }
 
+// update the role prompt
 function updateRole() {
   inquirer
     .prompt([
@@ -249,13 +253,17 @@ function updateRole() {
       },
     ])
     .then(function (response) {
-      connection.query("SELECT * from employee for update role", function (error, res) {
-        console.table(res);
-        endMenu();
-      })
+      connection.query(
+        "SELECT * from employee for update role",
+        function (error, res) {
+          console.table(res);
+          endMenu();
+        }
+      );
     });
 }
 
+// add a new department to the db
 function addDepartment() {
   inquirer
     .prompt([
@@ -269,11 +277,11 @@ function addDepartment() {
       connection.query("INSERT * to new department", function (error, res) {
         console.table(res);
         endMenu();
-      })
-      // addDepartment(response);
+      });
     });
 }
 
+// allows you to delete a employee
 function deleteEmployee() {
   inquirer
     .prompt([
@@ -296,6 +304,7 @@ function deleteEmployee() {
     });
 }
 
+// prompt that asks if you would like to continue running through the other prompts
 function endMenu() {
   confirm("Would you like to continue?").then(
     function confirmed() {
@@ -307,6 +316,7 @@ function endMenu() {
   );
 }
 
+// allows you to quit the application
 function quit() {
   console.log("Thank you for using the Employee Tracker!");
   connection.end();
