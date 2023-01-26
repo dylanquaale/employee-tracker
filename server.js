@@ -185,22 +185,30 @@ function menu(option) {
             choices: showemployees,
           },
         ]).then(function (response) {
-          addEmployee(response)
-        })
-    };
-
-    function addEmployee(data) {
-      connection.query("Add employee to role ?",
-        {
           firstName: data.firstName,
           last_name: data.lastName,
           role_id: data.title,
           manager_id: data.manager
-        }, function (error, res) {
+         function (error, res) {
           if (error) throw error;
-        })
+        }
       endMenu();
-    };
+
+          addEmployee(response)
+        }
+
+    // // function addEmployee(data) {
+    // //   connection.query("Add employee to role ?",
+    // //     {
+    //       // firstName: data.firstName,
+    //       // last_name: data.lastName,
+    //       // role_id: data.title,
+    //       // manager_id: data.manager
+    //     }, function (error, res) {
+    //       if (error) throw error;
+    //     })
+    //   endMenu();
+    // };
 
     function deleteEmployee() {
       inquirer
@@ -221,7 +229,7 @@ function menu(option) {
           endMenu();
         })
     };
-    function addDepartment() {
+    function addDept() {
       inquirer
         .prompt([
           {
