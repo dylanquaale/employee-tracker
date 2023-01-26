@@ -56,17 +56,26 @@ function showprompt() {
         name: "choices",
         choices: [
           {
-            name: "View all employees",
-            value: "viewEmployees"
-          },
-          {
             name: "View all departments",
             value: "viewDepartments"
+          },
+          {
+            name: "View all employees",
+            value: "viewEmployees"
           },
           {
             name: "View all roles",
             value: "viewRoles"
           },
+          {
+            name: "Add department",
+            value: "addDept"
+          }, 
+          {
+            name: "Add role",
+            value: "addRole"
+          },
+         
           {
             name: "Add employee",
             value: "addEmployee"
@@ -75,14 +84,7 @@ function showprompt() {
             name: "Delete employee",
             value: "deleteEmployee"
           },
-          {
-            name: "Add department",
-            value: "addDept"
-          },
-          {
-            name: "Add role",
-            value: "addRole"
-          },
+         
           {
             name: "Update role",
             value: "updateRole"
