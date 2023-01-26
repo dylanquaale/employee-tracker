@@ -1,6 +1,8 @@
 # employee-tracker
 Tutor: Ramon Sanchez,
-asoliz,
+ASK BCS: asoliz,
+ASK BCS: dgaither,
+ASK BCS: jproodian,
 https://github.com/rdevans87,
 https://github.com/EdenKhaos/12-mysql-employee-tracker,
 https://www.npmjs.com/package/inquirer/v/8.2.4,
