@@ -13,10 +13,6 @@ const connection = mysql.createConnection({
   database: "employees_db",
 });
 
-let showroles;
-let showdepartments;
-let showemployees;
-
 // this will initiate mysql
 connection.connect(function (err) {
   if (err) {
@@ -47,6 +43,7 @@ connection.connect(function (err) {
 
   showprompt();
 });
+
 // prompt menu
 function showprompt() {
   inquirer
@@ -81,14 +78,14 @@ function showprompt() {
           value: "addEmployee",
         },
         {
+          name: "Update role",
+          value: "updateRole",
+        },
+        {
           name: "Delete employee",
           value: "deleteEmployee",
         },
 
-        {
-          name: "Update role",
-          value: "updateRole",
-        },
         {
           name: "Quit",
           value: "quit",
@@ -130,6 +127,7 @@ function menu(option) {
       quit();
   }
 }
+
 // view all employees prompt
 function viewAllEmployees() {
   connection.query(
@@ -147,6 +145,7 @@ function viewAllEmployees() {
     }
   );
 }
+
 // function to: view all the departments
 function viewAllDepartments() {
   console.log("view all departments");
@@ -163,7 +162,7 @@ function viewAllRoles() {
   });
 }
 
-  // add employee prompt 
+  // add employee prompt
 function addEmployee() {
   inquirer
     .prompt([
@@ -199,67 +198,6 @@ function addEmployee() {
     })
 };
 
-// function addEmployees(data) {
-//   connection.query(
-//     "Add employee to role ?",
-//     {
-//       firstName: data.firstName,
-//       last_name: data.lastName,
-//       role_id: data.title,
-//       manager_id: data.manager,
-//     },
-//     function (error, res) {
-//       if (error) throw error;
-//     }
-//   );
-//   endMenu();
-// }
-
-function deleteEmployee() {
-  inquirer
-    .prompt([
-      {
-        type: "list",
-        message: "Delete which employee?",
-        name: "detId",
-        choices: showemployees,
-      },
-    ])
-    .then(function (response) {
-      console.log("Employee id: " + response.detId + " deleted.");
-      connection.query(
-        `DELETE from employee WHERE id = ${response.detId}`,
-        function (err, res) {
-          if (err) throw err;
-        }
-      );
-      endMenu();
-    });
-}
-function addDept() {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        message: "What would you like to name the new department?",
-        name: "name",
-      },
-    ])
-    .then(function (response) {
-      addDepartment(response);
-    });
-}
-function addDepartment(data) {
-  connection.query(
-    "Add new department ?",
-    { name: data.name },
-    function (error, res) {
-      if (error) throw error;
-    }
-  );
-  endMenu();
-}
-
 function addRole() {
   inquirer
     .prompt([
@@ -285,27 +223,15 @@ function addRole() {
         console.table(res);
         endMenu();
       })
-      // addRole(response);
     });
 }
-
-// function addEmployeeRole(data) {
-//   connection.query("INSERT INTO role SET ?", {
-//     title: data.title,
-//     salary: data.salary,
-//     department_id: data.id
-//   }, function (error, res) {
-//     if (error) throw error;
-//   });
-//   endMenu();
-// }
 
 function updateRole() {
   inquirer
     .prompt([
       {
         type: "list",
-        message: "For which employee would you like to update the role?",
+        message: " Which employee would you like to update the role?",
         name: "empID",
         choices: showemployees,
       },
@@ -317,18 +243,51 @@ function updateRole() {
       },
     ])
     .then(function (response) {
-      updateEmployeeRole(response);
+      connection.query("SELECT * from employee for update role", function (error, res) {
+        console.table(res);
+        endMenu();
+      })
     });
 }
 
-function updateEmployeeRole(data) {
-  connection.query(
-    `UPDATE employee SET role_id = ${data.titleID} WHERE id = ${data.detId}`,
-    function (error, res) {
-      if (error) throw error;
-    }
-  );
-  endMenu();
+function addDepartment() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "What would you like to name the new department?",
+        name: "name",
+      },
+    ])
+    .then(function (response) {
+      connection.query("SELECT * from new department", function (error, res) {
+        console.table(res);
+        endMenu();
+      })
+      // addDepartment(response);
+    });
+}
+
+function deleteEmployee() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        message: "Delete which employee?",
+        name: "detId",
+        choices: showemployees,
+      },
+    ])
+    .then(function (response) {
+      console.log("Employee id: " + response.detId + " deleted.");
+      connection.query(
+        `DELETE from employee WHERE id = ${response.detId}`,
+        function (err, res) {
+          if (err) throw err;
+        }
+      );
+      endMenu();
+    });
 }
 
 function endMenu() {
