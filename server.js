@@ -56,18 +56,17 @@ function showprompt() {
           name: "View all departments",
           value: "viewDepartments",
         },
+
         {
           name: "View all employees",
           value: "viewEmployees",
         },
+
         {
           name: "View all roles",
           value: "viewRoles",
         },
-        {
-          name: "Add department",
-          value: "addDept",
-        },
+      
         {
           name: "Add role",
           value: "addRole",
@@ -77,10 +76,17 @@ function showprompt() {
           name: "Add employee",
           value: "addEmployee",
         },
+
         {
           name: "Update role",
           value: "updateRole",
         },
+
+        {
+          name: "Add department",
+          value: "addDept",
+        },
+
         {
           name: "Delete employee",
           value: "deleteEmployee",
@@ -114,7 +120,7 @@ function menu(option) {
     case "deleteEmployee":
       deleteEmployee();
       break;
-    case "addDepartment":
+    case "addDept":
       addDepartment();
       break;
     case "addRole":
@@ -260,7 +266,7 @@ function addDepartment() {
       },
     ])
     .then(function (response) {
-      connection.query("SELECT * from new department", function (error, res) {
+      connection.query("INSERT * to new department", function (error, res) {
         console.table(res);
         endMenu();
       })
@@ -301,7 +307,7 @@ function endMenu() {
   );
 }
 
-function end() {
+function quit() {
   console.log("Thank you for using the Employee Tracker!");
   connection.end();
   process.exit();
