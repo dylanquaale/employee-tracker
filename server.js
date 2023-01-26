@@ -186,13 +186,25 @@ function menu(option) {
           },
         ]).then(function (response) {
            
-          connection.query("SELECT * from employee", function (error, res) {
-            console.table(res);
-            endMenu();
+          
           // addEmployee(response)
         })
       
-    });
+    };
+
+
+    function addEmployees(data) {
+      connection.query("Add employee to role ?",
+        {
+          firstName: data.firstName,
+          last_name: data.lastName,
+          role_id: data.title,
+          manager_id: data.manager
+        }, function (error, res) {
+          if (error) throw error;
+        })
+      endMenu();
+    };
 
     function deleteEmployee() {
       inquirer
@@ -320,4 +332,4 @@ function menu(option) {
 
 
 
-  }
+
